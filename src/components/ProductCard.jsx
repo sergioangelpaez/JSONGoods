@@ -1,41 +1,60 @@
-//https://1.bp.blogspot.com/-ObhS2Lq65GI/YLzGkqvTqiI/AAAAAAAAASs/006Ay3kOU5sCrjezXyjyrm67l3E8zUd6QCLcBGAsYHQ/s1280/animated%2Bproduct%2Bcard%2B%25281%2529.jpg
+import Button from './Button';
+import CategoryChip from './CategoryChip';
+import { capitalize } from '../utils/stringUtils';
+import { getStarTypes } from '../utils/getStarTypes';
+import StarIcon from './StarIcon';
 
-const ProductCard = () => {
-    return (
-        <div className="bg-white shadow-lg rounded-md border border-light-border px-3 py-5 flex flex-col gap-3">
-            {/* Imagen con chip encima */}
-            <div className="w-full aspect-[4/3] relative overflow-hidden rounded-md">
-                <img
-                    src=""
-                    className="absolute inset-0 w-full h-full object-cover"
-                    alt="Product"
-                />
-                {/* Chip de categoría */}
-                <div className="absolute top-2 left-2 bg-accent rounded-md px-2 py-1 text-white text-xs">
-                    <p>Category</p>
-                </div>
-            </div>
-
-            {/* Contenido del producto */}
-            <div>
-                <h1 className="text-base font-semibold">Product Title</h1>
-            </div>
-            <div>
-                <p className="text-sm text-gray-600">Product description goes here and it will be long as fuck.</p>
-            </div>
-            <div>
-                <p className="text-sm text-gray-500">Rating: 0/0</p>
-            </div>
-            <div>
-                <p className="text-lg font-bold text-green-600">$123.45</p>
-            </div>
-            <div>
-                <button className="mt-2 w-full bg-accent text-white py-2 rounded-md text-sm hover:opacity-90 transition">
-                    Add to cart
-                </button>
-            </div>
+const ProductCard = ({ product }) => {
+  return (
+    <div className="border-light-border flex flex-col gap-3 rounded-md border bg-white px-3 py-5 shadow-lg">
+      {/* Img */}
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md">
+        <img
+          src={product.thumbnail}
+          className="absolute inset-0 h-full w-full object-contain"
+          alt="Product"
+        />
+        {/* Category Chip */}
+        <div className="absolute top-2 left-2 flex flex-wrap items-center justify-center gap-2">
+          {product.tags.map(tag => (
+            <CategoryChip key={tag}>{capitalize(tag)}</CategoryChip>
+          ))}
         </div>
-    );
+      </div>
+
+      {/* Product Content */}
+      <div>
+        <h1 className="truncate text-base font-semibold">{product.title}</h1>
+      </div>
+      <div className="min-h-[100px]">
+        <p className="line-clamp-5 text-sm text-gray-600">{product.description}</p>
+      </div>
+      <div className="flex items-baseline-last justify-between">
+        <div>
+          <p className="text-light-text-main text-center text-2xl font-semibold">
+            ${product.price}
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="flex flex-col">
+            <div className="flex">
+              {getStarTypes(product.rating).map((type, i) => (
+                <StarIcon key={i} type={type} index={i} />
+              ))}
+            </div>
+            <div className="flex items-baseline justify-center gap-1">
+              <p className="text-md font-semibold">{product.rating.toFixed(1)}</p>
+              <p className="text-sm">({product.reviews.length} reviews)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <Button className="w-full">
+        <p className="w-full font-semibold">Add to cart</p>
+      </Button>
+    </div>
+  );
 };
 
 export default ProductCard;
