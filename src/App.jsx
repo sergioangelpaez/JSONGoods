@@ -3,7 +3,6 @@ import Header from './components/Header';
 import Button from './components/Button';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { useProducts } from './context/ProductContext';
-import { useEffect } from 'react';
 
 const App = () => {
   const { products, categories, loadMoreProducts, loading, loadingMore, hasMore, error } =
@@ -20,24 +19,24 @@ const App = () => {
           {/* Filters */}
           <div className="col-start-1 col-end-2">
             <div className="sticky top-0">
-              <div className="mb-5 pb-3">
+              <div className="pb-3">
                 <p className="text-2xl font-semibold">Filter products</p>
               </div>
-              <div className="mb-10 flex flex-col gap-0.5">
+              <div className="mb-10 flex flex-col gap-0.5 overflow-y-scroll max-h-[60vh]">
                 {categories.map(category => (
-                  <p className="text-sm">{category}</p>
+                  <p className="text-sm hover:underline hover:cursor-pointer hover:font-semibold">{category}</p>
                 ))}
               </div>
               <Button>
                 <AdjustmentsHorizontalIcon className="size-6" />
-                <p>Show more filters</p>
+                <p className='whitespace-nowrap truncate'>Show more filters</p>
               </Button>
             </div>
           </div>
 
           {/* Products */}
           <div className="col-start-2 col-end-4">
-            <div className="grid-rows-auto scroll- border-light-border grid grid-cols-5 gap-5 border-b-1 pb-5">
+            <div className="grid-rows-auto border-light-border grid lg:grid-cols-2 xl:grid-cols-4 gap-5 border-b-1 pb-5">
               {products.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
