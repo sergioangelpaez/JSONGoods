@@ -6,6 +6,7 @@ import {
 } from '../services/productService';
 
 const ProductContext = createContext();
+
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [skip, setSkip] = useState(0);
@@ -18,7 +19,6 @@ export const ProductProvider = ({ children }) => {
 
   const PRODUCTS_PER_PAGE = 20;
 
-  //set categories
   useEffect(() => {
     const loadCategories = async () => {
       try {
@@ -33,14 +33,13 @@ export const ProductProvider = ({ children }) => {
     loadCategories();
   }, []);
 
-  //load first 20 products on app first load
   useEffect(() => {
     const loadInitialProducts = async () => {
       try {
         setLoading(true);
         const initialProducts = await getPaginatedProducts(0, PRODUCTS_PER_PAGE);
         setProducts(initialProducts);
-        setSkip(PRODUCTS_PER_PAGE);
+        setSkip(initialProducts.length);
         setHasMore(initialProducts.length === PRODUCTS_PER_PAGE);
       } catch (err) {
         setError('There was an error fetching the products');
@@ -52,6 +51,8 @@ export const ProductProvider = ({ children }) => {
   }, []);
 
   const loadMoreProducts = async () => {
+    if (!hasMore) return;
+
     try {
       setLoadingMore(true);
 
@@ -63,7 +64,7 @@ export const ProductProvider = ({ children }) => {
       }
 
       setProducts(prev => [...prev, ...moreProducts]);
-      setSkip(prev => prev + PRODUCTS_PER_PAGE);
+      setSkip(prev => prev + moreProducts.length);
       setHasMore(moreProducts.length === PRODUCTS_PER_PAGE);
     } catch (err) {
       setError('There was an error loading more products.');
@@ -73,6 +74,8 @@ export const ProductProvider = ({ children }) => {
   };
 
   const applyCategoryFilter = async category => {
+    if (category === activeCategory) return;
+
     try {
       setLoading(true);
       setActiveCategory(category);
@@ -80,6 +83,7 @@ export const ProductProvider = ({ children }) => {
 
       const filteredProducts = await getProductsByCategory(category, 0, PRODUCTS_PER_PAGE);
       setProducts(filteredProducts);
+      setSkip(filteredProducts.length);
       setHasMore(filteredProducts.length === PRODUCTS_PER_PAGE);
       setError(null);
     } catch (err) {
@@ -107,6 +111,4 @@ export const ProductProvider = ({ children }) => {
   );
 };
 
-export const useProducts = () => {
-  return useContext(ProductContext);
-};
+export const useProducts = () => useContext(ProductContext);

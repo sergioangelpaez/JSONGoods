@@ -7,6 +7,7 @@ export const getPaginatedProducts = async (skip = 0, limit = 0) => {
 
 export const getProductsByCategory = async (category, skip = 0, limit = 0) => {
   const response = await axios.get(`/products/category/${category}?skip=${skip}&limit=${limit}`);
+  console.log(response.data.products);
   return response.data.products;
 };
 
