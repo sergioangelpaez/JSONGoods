@@ -24,8 +24,8 @@ const StarIcon = ({ type, index }) => {
           className="absolute inset-0 size-5 text-yellow-400"
         >
           <defs>
-            <clipPath id={`half-${index}`}>
-              <rect width="50%" height="100%" />
+            <clipPath id={`half-${index}`} clipPathUnits="objectBoundingBox">
+              <rect x="0" y="0" width="0.5" height="1" />
             </clipPath>
           </defs>
           <path

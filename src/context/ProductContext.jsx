@@ -93,6 +93,21 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  const searchProduct = async query => {
+    try {
+      setLoading(true);
+      const results = await getProductBySearch(query);
+      setProducts(results);
+      setSkip(results.length);
+      setHasMore(results.length === PRODUCTS_PER_PAGE);
+      setError(null);
+    } catch (err) {
+      setError('There was an error searching for products.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ProductContext.Provider
       value={{
@@ -104,6 +119,7 @@ export const ProductProvider = ({ children }) => {
         error,
         hasMore,
         applyCategoryFilter,
+        searchProduct,
       }}
     >
       {children}
