@@ -3,6 +3,7 @@ import {
   getAllProductCategories,
   getPaginatedProducts,
   getProductsByCategory,
+  getProductBySearch,
 } from '../services/productService';
 
 const ProductContext = createContext();
@@ -14,8 +15,8 @@ export const ProductProvider = ({ children }) => {
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
-  const [activeCategory, setActiveCategory] = useState(null);
   const [categories, setCategories] = useState([]);
+  const [activeCategories, setActiveCategories] = useState([]);
 
   const PRODUCTS_PER_PAGE = 20;
 
@@ -73,26 +74,6 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  const applyCategoryFilter = async category => {
-    if (category === activeCategory) return;
-
-    try {
-      setLoading(true);
-      setActiveCategory(category);
-      setSkip(0);
-
-      const filteredProducts = await getProductsByCategory(category, 0, PRODUCTS_PER_PAGE);
-      setProducts(filteredProducts);
-      setSkip(filteredProducts.length);
-      setHasMore(filteredProducts.length === PRODUCTS_PER_PAGE);
-      setError(null);
-    } catch (err) {
-      setError('There was an error applying the filter.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const searchProduct = async query => {
     try {
       setLoading(true);
@@ -108,17 +89,25 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
+  const filterBySelectedCategories = async selectedCategories => {
+    if (selectedCategories.length === 0) {
+      getPaginatedProducts(0, PRODUCTS_PER_PAGE);
+      setSkip();
+    }
+  };
+
   return (
     <ProductContext.Provider
       value={{
         products,
         categories,
+        activeCategories,
+        setActiveCategories,
         loadMoreProducts,
         loading,
         loadingMore,
         error,
         hasMore,
-        applyCategoryFilter,
         searchProduct,
       }}
     >

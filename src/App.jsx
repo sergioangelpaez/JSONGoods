@@ -3,19 +3,27 @@ import Header from './components/Header';
 import Button from './components/Button';
 import { AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 import { useProducts } from './context/ProductContext';
-import { getProductsByCategory } from './services/productService';
+import { formatFilter } from './utils/stringUtils';
 
 const App = () => {
   const {
     products,
     categories,
+    activeCategories,
+    setActiveCategories,
+    applyCategoryFilter,
     loadMoreProducts,
     loading,
     loadingMore,
     hasMore,
     error,
-    applyCategoryFilter,
   } = useProducts();
+
+  const toggleCategory = category => {
+    setSelectedCategories(prev =>
+      prev.includes(category) ? prev.filter(c => c !== category) : [...prev, category]
+    );
+  };
 
   return (
     <div className="text-light-text-main h-full w-full">
@@ -35,10 +43,10 @@ const App = () => {
                 {categories.map(category => (
                   <p
                     className="text-sm hover:cursor-pointer hover:font-semibold hover:underline"
-                    onClick={() => applyCategoryFilter(category)}
+                    onClick={() => setActiveCategories(prev => [...prev, category])}
                     key={category}
                   >
-                    {category}
+                    {formatFilter(category)}
                   </p>
                 ))}
               </div>
@@ -58,9 +66,11 @@ const App = () => {
             </div>
             <div className="flex w-full flex-col items-center justify-center gap-3 py-5">
               <p className="text-sm">Showing {products.length} products.</p>
-              <Button onClick={loadMoreProducts}>
-                <p>Load more products</p>
-              </Button>
+              {hasMore && (
+                <Button onClick={loadMoreProducts}>
+                  <p>Load more products</p>
+                </Button>
+              )}
             </div>
           </div>
         </div>
