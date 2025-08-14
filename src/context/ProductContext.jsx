@@ -51,6 +51,10 @@ export const ProductProvider = ({ children }) => {
     loadInitialProducts();
   }, []);
 
+  useEffect(() => {
+    filterBySelectedCategories();
+  }, [activeCategories]);
+
   const loadMoreProducts = async () => {
     if (!hasMore) return;
 
@@ -89,10 +93,15 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  const filterBySelectedCategories = async selectedCategories => {
-    if (selectedCategories.length === 0) {
-      getPaginatedProducts(0, PRODUCTS_PER_PAGE);
-      setSkip();
+  const filterBySelectedCategories = async () => {
+    if (activeCategories.length > 0) {
+      const results = await Promise.all(
+        activeCategories.map(category => getProductsByCategory(category, 0, PRODUCTS_PER_PAGE))
+      );
+      setProducts(results.flat());
+    } else {
+      setProducts(await getPaginatedProducts(0, PRODUCTS_PER_PAGE));
+      return;
     }
   };
 
