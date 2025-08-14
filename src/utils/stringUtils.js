@@ -1,6 +1,6 @@
 export const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 
-export const formatFilter = str => {
+export const toCamelCase = str => {
   if (!str.includes('-')) {
     return capitalize(str);
   } else {

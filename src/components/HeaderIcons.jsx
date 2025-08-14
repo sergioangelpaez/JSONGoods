@@ -1,4 +1,7 @@
+import { useCart } from '../context/CartContext';
+
 const HeaderIcons = ({ className = '' }) => {
+  const { setIsCartOpen } = useCart();
   return (
     <div className={`flex items-center justify-end gap-5 ${className}`}>
       {/* Cart + badge */}
@@ -7,6 +10,7 @@ const HeaderIcons = ({ className = '' }) => {
           title="Cart"
           className="hover:text-accent cursor-pointer rounded-full p-1"
           aria-label="Cart"
+          onClick={() => setIsCartOpen(prev => !prev)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

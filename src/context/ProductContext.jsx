@@ -5,6 +5,8 @@ import {
   getProductsByCategory,
   getProductBySearch,
 } from '../services/productService';
+import { shuffleArray } from '../utils/arrayUtils';
+import debounce from 'lodash.debounce';
 
 const ProductContext = createContext();
 
@@ -17,6 +19,10 @@ export const ProductProvider = ({ children }) => {
   const [hasMore, setHasMore] = useState(true);
   const [categories, setCategories] = useState([]);
   const [activeCategories, setActiveCategories] = useState([]);
+
+  const debouncedFilter = debounce(() => {
+    filterBySelectedCategories();
+  }, 1000);
 
   const PRODUCTS_PER_PAGE = 20;
 
@@ -52,7 +58,7 @@ export const ProductProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    filterBySelectedCategories();
+    debouncedFilter();
   }, [activeCategories]);
 
   const loadMoreProducts = async () => {
@@ -94,14 +100,22 @@ export const ProductProvider = ({ children }) => {
   };
 
   const filterBySelectedCategories = async () => {
-    if (activeCategories.length > 0) {
-      const results = await Promise.all(
-        activeCategories.map(category => getProductsByCategory(category, 0, PRODUCTS_PER_PAGE))
-      );
-      setProducts(results.flat());
-    } else {
-      setProducts(await getPaginatedProducts(0, PRODUCTS_PER_PAGE));
-      return;
+    try {
+      if (activeCategories.length > 0) {
+        const results = await Promise.all(
+          activeCategories.map(category => getProductsByCategory(category, 0, PRODUCTS_PER_PAGE))
+        );
+        const shuffledResults = shuffleArray(results.flat());
+        setProducts(shuffledResults);
+        setHasMore(results.flat().length === PRODUCTS_PER_PAGE);
+        setError(null);
+      } else {
+        setProducts(await getPaginatedProducts(0, PRODUCTS_PER_PAGE));
+      }
+    } catch (err) {
+      setError('There was an error applying the category filters.');
+    } finally {
+      setLoading(false);
     }
   };
 

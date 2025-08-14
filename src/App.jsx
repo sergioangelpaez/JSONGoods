@@ -1,9 +1,10 @@
 import ProductCard from './components/ProductCard';
 import Header from './components/Header';
 import Button from './components/Button';
-import { AdjustmentsHorizontalIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { useProducts } from './context/ProductContext';
-import { formatFilter } from './utils/stringUtils';
+import { toCamelCase } from './utils/stringUtils';
+import CartSidebar from './components/CartSidebar';
+import { useCart } from './context/CartContext';
 
 const App = () => {
   const {
@@ -18,6 +19,8 @@ const App = () => {
     hasMore,
     error,
   } = useProducts();
+
+  const { isCartOpen } = useCart();
 
   const toggleCategory = category => {
     setActiveCategories(prev =>
@@ -46,7 +49,7 @@ const App = () => {
                       className={`flex items-center justify-between truncate py-1 text-sm hover:font-semibold ${activeCategories.includes(category) ? 'bg-accent my-0.5 rounded-md px-2 text-white' : ''}`}
                       onClick={() => toggleCategory(category)}
                     >
-                      {formatFilter(category)}
+                      {toCamelCase(category)}
                       {activeCategories.includes(category) && (
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -88,6 +91,7 @@ const App = () => {
           </div>
         </div>
       </div>
+      {isCartOpen && <CartSidebar>Contenido del carrito</CartSidebar>}
     </div>
   );
 };

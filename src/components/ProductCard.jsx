@@ -3,8 +3,10 @@ import CategoryChip from './CategoryChip';
 import { capitalize } from '../utils/stringUtils';
 import { getStarTypes } from '../utils/getStarTypes';
 import StarIcon from './StarIcon';
+import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ product }) => {
+  const { addToCart } = useCart();
   return (
     <div className="border-light-border flex flex-col gap-3 rounded-md border bg-white px-3 py-5 shadow-lg">
       {/* Img */}
@@ -50,7 +52,7 @@ const ProductCard = ({ product }) => {
         </div>
       </div>
 
-      <Button className="w-full">
+      <Button className="w-full" onClick={() => addToCart(product)}>
         <p className="w-full font-semibold">Add to cart</p>
       </Button>
     </div>
