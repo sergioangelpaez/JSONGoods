@@ -8,7 +8,7 @@ import { useCart } from '../context/CartContext';
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
   return (
-    <div className="border-light-border flex flex-col gap-3 rounded-md border bg-white px-3 py-5 shadow-lg">
+    <div className="border-gray-border flex flex-col gap-3 rounded-md border bg-white px-3 py-5 shadow-lg">
       {/* Img */}
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md">
         <img
