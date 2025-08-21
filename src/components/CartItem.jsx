@@ -1,6 +1,6 @@
 import { useCart } from '../context/CartContext';
 const CartItem = ({ item }) => {
-  const { updateQuantity } = useCart();
+  const { updateQuantity, removeFromCart } = useCart();
   return (
     <div
       className="bg-light-card-bg border-gray-border text-light-text-main grid grid-cols-[120px_minmax(0,1fr)] rounded-md border shadow-md"
@@ -15,7 +15,10 @@ const CartItem = ({ item }) => {
             <div className="w-[90%]">
               <p className="truncate text-lg font-bold">{item.title}</p>
             </div>
-            <div className="group hover:bg-accent cursor-pointer rounded-full p-1">
+            <div
+              className="group hover:bg-accent cursor-pointer rounded-full p-1"
+              onClick={() => removeFromCart(item.id)}
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -37,7 +40,7 @@ const CartItem = ({ item }) => {
             min="1"
             value={item.quantity}
             onChange={e => updateQuantity(item.id, Math.max(1, Number(e.target.value)))}
-            className="border-accent/50 h-full w-[50px] rounded border text-center leading-none"
+            className="border-accent/50 hover:outline-accent focus:outline-accent h-full w-[50px] rounded border text-center leading-none hover:outline-1 focus:outline-2"
           />
           <p className="text-lg">= ${item.price * item.quantity}</p>
         </div>

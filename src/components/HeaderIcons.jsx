@@ -1,7 +1,7 @@
 import { useCart } from '../context/CartContext';
 
 const HeaderIcons = ({ className = '' }) => {
-  const { setIsCartOpen } = useCart();
+  const { setIsCartOpen, cartItems } = useCart();
   return (
     <div className={`flex items-center justify-end gap-5 ${className}`}>
       {/* Cart + badge */}
@@ -28,10 +28,11 @@ const HeaderIcons = ({ className = '' }) => {
           </svg>
         </button>
 
-        {/* Badge hardcodeado */}
-        <span className="bg-accent absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] leading-none font-bold text-white ring-2 ring-white">
-          2
-        </span>
+        {cartItems.length === 0 ? null : (
+          <span className="bg-accent absolute -top-1 -right-1 flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[10px] leading-none font-bold text-white ring-2 ring-white">
+            {cartItems.length}
+          </span>
+        )}
       </div>
 
       <a

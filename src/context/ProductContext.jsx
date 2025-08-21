@@ -7,6 +7,7 @@ import {
 } from '../services/productService';
 import { shuffleArray } from '../utils/arrayUtils';
 import debounce from 'lodash.debounce';
+import { filter } from 'framer-motion/client';
 
 const ProductContext = createContext();
 
@@ -14,6 +15,7 @@ export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
   const [skip, setSkip] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [hasMore, setHasMore] = useState(true);
@@ -29,12 +31,13 @@ export const ProductProvider = ({ children }) => {
   useEffect(() => {
     const loadCategories = async () => {
       try {
+        setLoadingCategories(true);
         const allCategories = await getAllProductCategories();
         setCategories(allCategories);
       } catch (err) {
         setError('There was an error fetching product categories.');
       } finally {
-        setLoading(false);
+        setLoadingCategories(false);
       }
     };
     loadCategories();
@@ -62,14 +65,13 @@ export const ProductProvider = ({ children }) => {
   }, [activeCategories]);
 
   const loadMoreProducts = async () => {
-    if (!hasMore) return;
-
     try {
       setLoadingMore(true);
 
       let moreProducts;
-      if (activeCategory) {
-        moreProducts = await getProductsByCategory(activeCategory, skip, PRODUCTS_PER_PAGE);
+      if (activeCategories.length > 0) {
+        filterBySelectedCategories();
+        return;
       } else {
         moreProducts = await getPaginatedProducts(skip, PRODUCTS_PER_PAGE);
       }
@@ -88,7 +90,7 @@ export const ProductProvider = ({ children }) => {
     try {
       setLoading(true);
       const results = await getProductBySearch(query);
-      setProducts(results);
+      setProducts(prev => [...prev, ...results]);
       setSkip(results.length);
       setHasMore(results.length === PRODUCTS_PER_PAGE);
       setError(null);
@@ -101,12 +103,12 @@ export const ProductProvider = ({ children }) => {
 
   const filterBySelectedCategories = async () => {
     try {
+      setLoading(true);
       if (activeCategories.length > 0) {
         const results = await Promise.all(
           activeCategories.map(category => getProductsByCategory(category, 0, PRODUCTS_PER_PAGE))
         );
-        const shuffledResults = shuffleArray(results.flat());
-        setProducts(shuffledResults);
+        setProducts(results.flat());
         setHasMore(results.flat().length === PRODUCTS_PER_PAGE);
         setError(null);
       } else {
@@ -125,6 +127,7 @@ export const ProductProvider = ({ children }) => {
         products,
         categories,
         activeCategories,
+        loadingCategories,
         setActiveCategories,
         loadMoreProducts,
         loading,

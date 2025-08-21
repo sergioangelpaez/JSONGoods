@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Button from './Button';
 import CategoryChip from './CategoryChip';
 import { capitalize } from '../utils/stringUtils';
@@ -7,15 +8,24 @@ import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+  const [imgLoaded, setImgLoaded] = useState(false);
+
   return (
     <div className="border-gray-border flex flex-col gap-3 rounded-md border bg-white px-3 py-5 shadow-lg">
       {/* Img */}
       <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md">
+        {!imgLoaded && (
+          <div className="absolute inset-0 animate-pulse rounded-md bg-gray-300"></div>
+        )}
         <img
           src={product.thumbnail}
-          className="absolute inset-0 h-full w-full object-contain"
           alt="Product"
+          className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-300 ${
+            imgLoaded ? 'opacity-100' : 'opacity-0'
+          }`}
+          onLoad={() => setImgLoaded(true)}
         />
+
         {/* Category Chip */}
         <div className="absolute top-2 left-2 flex flex-wrap items-center justify-center gap-2">
           {product.tags.map(tag => (
@@ -31,6 +41,7 @@ const ProductCard = ({ product }) => {
       <div className="min-h-[100px]">
         <p className="line-clamp-5 text-sm text-gray-600">{product.description}</p>
       </div>
+
       <div className="flex items-baseline-last justify-between">
         <div>
           <p className="text-light-text-main text-center text-2xl font-semibold">
