@@ -7,6 +7,7 @@ import ProductCardSkeleton from './components/Skeletons/ProductCardSekeleton';
 import { useCart } from './context/CartContext';
 import FilterSidebar from './components/FilterSidebar';
 import FilterSidebarSkeleton from './components/Skeletons/FilterSidebarSkeleton';
+import Toast from './components/Toast';
 
 const App = () => {
   const {
@@ -19,7 +20,9 @@ const App = () => {
     loading,
     loadingMore,
     hasMore,
-    error,
+    errors,
+    setErrors,
+    resultsFromCategorySearch,
   } = useProducts();
 
   const { isCartOpen } = useCart();
@@ -61,18 +64,37 @@ const App = () => {
                 ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
                 : null}
             </div>
-            <div className="flex w-full flex-col items-center justify-center gap-3 py-5">
-              <p className="text-sm">Showing {products.length} products.</p>
-              {hasMore && loadMoreProducts && (
-                <Button onClick={() => loadMoreProducts()}>
-                  <p>Load more products</p>
-                </Button>
-              )}
-            </div>
+            {(products.length > 0 || resultsFromCategorySearch.length > 0) && (
+              <div className="flex w-full flex-col items-center justify-center gap-3 py-5">
+                <p className="text-sm">Showing {products.length} products.</p>
+                {hasMore && loadMoreProducts && (
+                  <Button onClick={() => loadMoreProducts()}>
+                    <p>Load more products</p>
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
+
+      {/* Cart */}
       {isCartOpen && <CartSidebar>Contenido del carrito</CartSidebar>}
+
+      {/* Error toast */}
+      <div className="fixed right-5 bottom-5 flex flex-col gap-3">
+        {Object.entries(errors).map(([key, err]) =>
+          err ? (
+            <Toast
+              key={key}
+              title={err.title}
+              message={err.message}
+              variant={err.variant}
+              onClose={() => setErrors(prev => ({ ...prev, [key]: null }))}
+            />
+          ) : null
+        )}
+      </div>
     </div>
   );
 };

@@ -1,8 +1,8 @@
 export const handleAsync = async (fn, { setLoadingState, setError }) => {
   try {
     setLoadingState(true);
-    setError(null);
     await fn();
+    setError(null);
   } catch (err) {
     setError(err.message || 'Unexpected error.');
   } finally {

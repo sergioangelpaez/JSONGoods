@@ -8,6 +8,8 @@ import {
 import Fuse from 'fuse.js';
 import { handleAsync } from '../utils/asyncHandler';
 import { updatePagination } from '../utils/updatePagination';
+import { mapError } from '../utils/errorMapper';
+import { useCart } from './CartContext';
 
 const PRODUCTS_PER_PAGE = 20;
 
@@ -26,7 +28,13 @@ export const ProductProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
-  const [error, setError] = useState(null);
+  const [errors, setErrors] = useState({
+    categories: null,
+    products: null,
+    search: null,
+  });
+
+  const { clearCart } = useCart();
 
   /** ========================
    *   LOADERS
@@ -37,7 +45,10 @@ export const ProductProvider = ({ children }) => {
         const allCategories = await getAllProductCategories();
         setCategories(allCategories);
       },
-      { setLoadingState: setLoadingCategories, setError }
+      {
+        setLoadingState: setLoadingCategories,
+        setError: err => setErrors(prev => ({ ...prev, categories: mapError(err, 'categories') })),
+      }
     );
 
   const loadInitialProducts = () =>
@@ -48,7 +59,10 @@ export const ProductProvider = ({ children }) => {
         setSkip(initialProducts.length);
         setHasMore(initialProducts.length === PRODUCTS_PER_PAGE);
       },
-      { setLoadingState: setLoading, setError }
+      {
+        setLoadingState: setLoading,
+        setError: err => setErrors(prev => ({ ...prev, products: mapError(err, 'products') })),
+      }
     );
 
   const loadMoreProducts = () =>
@@ -69,8 +83,20 @@ export const ProductProvider = ({ children }) => {
           updatePagination(setProducts, setSkip, setHasMore, moreProducts);
         }
       },
-      { setLoadingState: setLoadingMore, setError }
+      {
+        setLoadingState: setLoadingMore,
+        setError: err => setErrors(prev => ({ ...prev, products: mapError(err, 'products') })),
+      }
     );
+
+  const reloadApp = () => {
+    setSkip(0);
+    setActiveCategories([]);
+    setResultsFromCategorySearch([]);
+    setQuery('');
+    clearCart();
+    loadInitialProducts();
+  };
 
   /** ========================
    *   SEARCH & FILTER
@@ -94,7 +120,10 @@ export const ProductProvider = ({ children }) => {
           setHasMore(results.length > PRODUCTS_PER_PAGE);
         }
       },
-      { setLoadingState: setLoading, setError }
+      {
+        setLoadingState: setLoading,
+        setError: err => setErrors(prev => ({ ...prev, search: mapError(err, 'search') })),
+      }
     );
 
   const filterBySelectedCategories = () =>
@@ -116,16 +145,22 @@ export const ProductProvider = ({ children }) => {
           setHasMore(results.length === PRODUCTS_PER_PAGE);
         }
       },
-      { setLoadingState: setLoading, setError }
+      {
+        setLoadingState: setLoading,
+        setError: err => setErrors(prev => ({ ...prev, search: mapError(err, 'search') })),
+      }
     );
 
   /** ========================
    *   EFFECTS
    ======================== */
+
+  //load product categories on app start
   useEffect(() => {
     loadCategories();
   }, []);
 
+  //refilter products on category change
   useEffect(() => {
     const id = setTimeout(() => {
       filterBySelectedCategories();
@@ -133,6 +168,9 @@ export const ProductProvider = ({ children }) => {
     return () => clearTimeout(id);
   }, [activeCategories]);
 
+  // Update products when the search query changes:
+  // - If query is empty → show initial or category-filtered products
+  // - If query has text → run product search
   useEffect(() => {
     if (query.trim() === '') {
       if (activeCategories.length === 0) loadInitialProducts();
@@ -142,6 +180,8 @@ export const ProductProvider = ({ children }) => {
     }
   }, [query]);
 
+  // Reset products whenever category search results change,
+  // showing only the first page of results
   useEffect(() => {
     setProducts(resultsFromCategorySearch.slice(0, PRODUCTS_PER_PAGE));
   }, [resultsFromCategorySearch]);
@@ -157,10 +197,13 @@ export const ProductProvider = ({ children }) => {
         loadMoreProducts,
         loading,
         loadingMore,
-        error,
+        errors,
         hasMore,
         searchProduct,
         setQuery,
+        setErrors,
+        resultsFromCategorySearch,
+        reloadApp,
       }}
     >
       {children}

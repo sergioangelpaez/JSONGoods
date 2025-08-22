@@ -7,10 +7,10 @@ import { CartProvider } from './context/CartContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ProductProvider>
-      <CartProvider>
+    <CartProvider>
+      <ProductProvider>
         <Root />
-      </CartProvider>
-    </ProductProvider>
+      </ProductProvider>
+    </CartProvider>
   </StrictMode>
 );

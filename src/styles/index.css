@@ -37,3 +37,12 @@
     --color-accent-secondary: #00eaff; /* Cian neón */
   }
 }
+
+@keyframes shrink {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0%;
+  }
+}
