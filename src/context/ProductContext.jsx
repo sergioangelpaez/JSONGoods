@@ -21,6 +21,7 @@ export const ProductProvider = ({ children }) => {
   const [hasMore, setHasMore] = useState(true);
   const [categories, setCategories] = useState([]);
   const [activeCategories, setActiveCategories] = useState([]);
+  const [resultsFromCategorySearch, setResultsFromCategorySearch] = useState([]);
 
   const debouncedFilter = debounce(() => {
     filterBySelectedCategories();
@@ -68,17 +69,25 @@ export const ProductProvider = ({ children }) => {
     try {
       setLoadingMore(true);
 
-      let moreProducts;
+      let moreProducts = [];
       if (activeCategories.length > 0) {
-        filterBySelectedCategories();
-        return;
+        if (hasMore) {
+          if (resultsFromCategorySearch.slice(skip).length < PRODUCTS_PER_PAGE) {
+            moreProducts = resultsFromCategorySearch.slice(skip);
+          } else {
+            moreProducts = resultsFromCategorySearch.slice(skip, skip + PRODUCTS_PER_PAGE);
+          }
+
+          setProducts(prev => [...prev, ...moreProducts]);
+          setSkip(prev => prev + moreProducts.length);
+          setHasMore(products.length < resultsFromCategorySearch.length);
+        }
       } else {
         moreProducts = await getPaginatedProducts(skip, PRODUCTS_PER_PAGE);
+        setProducts(prev => [...prev, ...moreProducts]);
+        setSkip(prev => prev + moreProducts.length);
+        setHasMore(moreProducts.length === PRODUCTS_PER_PAGE);
       }
-
-      setProducts(prev => [...prev, ...moreProducts]);
-      setSkip(prev => prev + moreProducts.length);
-      setHasMore(moreProducts.length === PRODUCTS_PER_PAGE);
     } catch (err) {
       setError('There was an error loading more products.');
     } finally {
@@ -90,7 +99,7 @@ export const ProductProvider = ({ children }) => {
     try {
       setLoading(true);
       const results = await getProductBySearch(query);
-      setProducts(prev => [...prev, ...results]);
+      setProducts(results);
       setSkip(results.length);
       setHasMore(results.length === PRODUCTS_PER_PAGE);
       setError(null);
@@ -103,23 +112,32 @@ export const ProductProvider = ({ children }) => {
 
   const filterBySelectedCategories = async () => {
     try {
-      setLoading(true);
       if (activeCategories.length > 0) {
+        setLoading(true);
         const results = await Promise.all(
-          activeCategories.map(category => getProductsByCategory(category, 0, PRODUCTS_PER_PAGE))
+          activeCategories.map(category => getProductsByCategory(category, 0, 0))
         );
-        setProducts(results.flat());
-        setHasMore(results.flat().length === PRODUCTS_PER_PAGE);
-        setError(null);
+        setResultsFromCategorySearch(results.flat());
+        setSkip(
+          results.flat().length >= PRODUCTS_PER_PAGE ? PRODUCTS_PER_PAGE : results.flat.length
+        );
+        setHasMore(results.flat().length > PRODUCTS_PER_PAGE);
       } else {
-        setProducts(await getPaginatedProducts(0, PRODUCTS_PER_PAGE));
+        setLoading(true);
+        const results = await getPaginatedProducts(0, PRODUCTS_PER_PAGE);
+        setProducts(results);
       }
     } catch (err) {
       setError('There was an error applying the category filters.');
+      return [];
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    setProducts(resultsFromCategorySearch.slice(0, PRODUCTS_PER_PAGE));
+  }, [resultsFromCategorySearch]);
 
   return (
     <ProductContext.Provider
