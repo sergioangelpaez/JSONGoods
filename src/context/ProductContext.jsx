@@ -204,6 +204,7 @@ export const ProductProvider = ({ children }) => {
         setErrors,
         resultsFromCategorySearch,
         reloadApp,
+        query,
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import HeaderIcons from './HeaderIcons';
+import NavigationMenu from './NavigationMenu';
 import SearchBar from './SearchBar';
 import { useProducts } from '../context/ProductContext';
 
@@ -10,13 +10,13 @@ const Header = ({ className = '' }) => {
     >
       <h1
         onClick={() => reloadApp()}
-        className="text-accent cursor-pointer text-4xl font-bold whitespace-nowrap"
+        className="text-accent cursor-pointer text-3xl font-bold whitespace-nowrap md:text-4xl"
         title="Reload app"
       >
         JSON Goods
       </h1>
       <SearchBar className="col-start-2 col-end-3" />
-      <HeaderIcons className="col-start-3" />
+      <NavigationMenu className="col-start-3" />
     </div>
   );
 };

@@ -4,7 +4,7 @@ const FilterSidebar = ({ categories, activeCategories, toggleCategory }) => {
   return (
     <div className="sticky top-0">
       <div className="pb-3">
-        <p className="text-2xl font-semibold">Filter products</p>
+        <p className="truncate text-2xl font-semibold">Filter products</p>
       </div>
       <div className="mb-10 flex max-h-[75vh] flex-col gap-0.5 overflow-y-auto">
         {categories.map(category => (

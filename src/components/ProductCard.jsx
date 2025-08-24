@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
 
       {/* Product Content */}
       <div>
-        <h1 className="truncate text-base font-semibold">{product.title}</h1>
+        <h1 className="truncate text-lg font-semibold">{product.title}</h1>
       </div>
       <div className="min-h-[100px]">
         <p className="line-clamp-5 text-sm text-gray-600">{product.description}</p>

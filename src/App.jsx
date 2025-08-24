@@ -40,9 +40,9 @@ const App = () => {
         <Header className="col-start-1 col-end-4" />
 
         {/* Inner Container */}
-        <div className="col-start-1 col-end-4 row-start-2 grid grid-cols-[0.35fr_2fr_0.2fr] gap-5 overflow-auto px-10 py-5">
-          <div className="sticky top-0">
-            {/* Filters */}
+        <div className="col-start-1 col-end-4 row-start-2 grid grid-cols-[0.4fr_2fr_0.2fr] gap-5 overflow-auto px-5 py-5 md:px-10">
+          {/* Filters */}
+          <div className="sticky top-0 hidden lg:block">
             {loadingCategories ? (
               <FilterSidebarSkeleton />
             ) : (
@@ -55,8 +55,8 @@ const App = () => {
           </div>
 
           {/* Products */}
-          <div className="col-start-2 col-end-4">
-            <div className="grid-rows-auto border-light-border grid gap-5 border-b-1 pb-5 lg:grid-cols-2 xl:grid-cols-4">
+          <div className="col-start-1 col-end-4 lg:col-start-2">
+            <div className="grid-rows-auto border-light-border grid grid-cols-1 gap-5 border-b-1 pb-5 lg:grid-cols-2 xl:grid-cols-4">
               {loading
                 ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
                 : products.map(product => <ProductCard key={product.id} product={product} />)}
