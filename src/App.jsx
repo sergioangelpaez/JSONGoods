@@ -8,6 +8,9 @@ import { useCart } from './context/CartContext';
 import FilterSidebar from './components/FilterSidebar';
 import FilterSidebarSkeleton from './components/Skeletons/FilterSidebarSkeleton';
 import Toast from './components/Toast';
+import { AdjustmentsHorizontalIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
 const App = () => {
   const {
@@ -25,7 +28,8 @@ const App = () => {
     resultsFromCategorySearch,
   } = useProducts();
 
-  const { isCartOpen } = useCart();
+  const { isCartOpen, setIsCartOpen } = useCart();
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const toggleCategory = category => {
     setActiveCategories(prev =>
@@ -34,15 +38,15 @@ const App = () => {
   };
 
   return (
-    <div className="text-light-text-main h-full w-full">
+    <div className="text-text-main h-full w-full">
       <div className="grid h-full w-full grid-cols-[0.35fr_2fr_0.2fr] grid-rows-[auto_1fr]">
         {/* Header */}
         <Header className="col-start-1 col-end-4" />
 
         {/* Inner Container */}
-        <div className="col-start-1 col-end-4 row-start-2 grid grid-cols-[0.4fr_2fr_0.2fr] gap-5 overflow-auto px-5 py-5 md:px-10">
+        <div className="bg-bg-main col-start-1 col-end-4 row-start-2 grid grid-cols-[0.4fr_2fr_0.2fr] gap-5 overflow-auto px-5 py-5 md:px-10">
           {/* Filters */}
-          <div className="sticky top-0 hidden lg:block">
+          <div className="sticky top-0 hidden md:block">
             {loadingCategories ? (
               <FilterSidebarSkeleton />
             ) : (
@@ -79,7 +83,7 @@ const App = () => {
       </div>
 
       {/* Cart */}
-      {isCartOpen && <CartSidebar>Contenido del carrito</CartSidebar>}
+      <CartSidebar>Contenido del carrito</CartSidebar>
 
       {/* Error toast */}
       <div className="fixed right-5 bottom-5 flex flex-col gap-3">
@@ -95,6 +99,58 @@ const App = () => {
           ) : null
         )}
       </div>
+
+      {/* Filter Button Mobile */}
+      <div className="fixed right-5 bottom-5 z-50 rounded-md text-lg text-white shadow-md shadow-black md:hidden">
+        {isFiltersOpen ? (
+          <Button onClick={() => setIsFiltersOpen(prev => !prev)}>
+            <XMarkIcon className="size-5" />
+            <p>Close</p>
+          </Button>
+        ) : (
+          <Button onClick={() => setIsFiltersOpen(prev => !prev)}>
+            <AdjustmentsHorizontalIcon className="size-5" />
+            <p>Filters</p>
+          </Button>
+        )}
+      </div>
+
+      {/* Filter Sidebar Mobile */}
+      {isFiltersOpen && (
+        <AnimatePresence>
+          {isFiltersOpen && (
+            <>
+              {/* Overlay */}
+              <motion.div
+                key="overlay"
+                className="fixed inset-0 z-[40] bg-black/70 md:hidden"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                onClick={() => setIsFiltersOpen(false)}
+              />
+
+              {/* Panel */}
+              <motion.aside
+                key="panel"
+                className="bg-bg-main text-text-main fixed top-0 left-0 z-[50] h-[100dvh] w-3/5 max-w-sm overflow-y-auto p-5 shadow-lg md:hidden"
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ duration: 0.4, ease: 'easeInOut' }}
+                onClick={e => e.stopPropagation()}
+              >
+                <FilterSidebar
+                  categories={categories}
+                  activeCategories={activeCategories}
+                  toggleCategory={toggleCategory}
+                />
+              </motion.aside>
+            </>
+          )}
+        </AnimatePresence>
+      )}
     </div>
   );
 };

@@ -3,46 +3,35 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-light-bg-main: #f5f3ff; /* Lavanda muy claro */
-  --color-light-text-main: #2a004f; /* Morado oscuro */
-  --color-light-text-secondary: #5e3a8c; /* Lavanda oscuro */
-  --color-gray-border: #d1d5db;
-  --color-purple-accent: #8a2be2; /* Morado eléctrico */
-  --color-purple-accent-hover: #7326c5;
-  --color-purple-accent-active: #611ea8;
+  --color-bg-main: #f5f3ff;
+  --color-text-main: #39006b;
+  --color-text-secondary: #5e3a8c;
+  --color-border: #e0c2ff;
+  --color-card-bg: #ffffff;
 
-  --color-light-border: #e0c2ff; /* Bordes lavanda suave */
-  --color-light-card-bg: #ffffff;
+  --color-skeleton-light: #e5e7eb;
+  --color-skeleton-dark: #d1d5db;
 
-  --color-accent: var(--color-purple-accent); /* Morado es ahora el principal */
-  --color-accent-hover: var(--color-purple-accent-hover);
-  --color-accent-active: var(--color-purple-accent-active);
-  --color-accent-secondary: #5ad4f0; /* Cian pastel para contraste */
+  --color-accent: #8a2be2;
+  --color-accent-hover: #7326c5;
+  --color-accent-active: #611ea8;
+  --color-accent-secondary: #5ad4f0;
 }
 
-.dark {
-  @theme {
-    --color-dark-bg-main: #0d0a1a; /* Negro con morado */
-    --color-dark-text-main: #e0e0ff; /* Blanco lavanda */
-    --color-dark-text-secondary: #a78bfa; /* Lavanda brillante */
+@layer base {
+  .dark {
+    --color-bg-main: #270d3d;
+    --color-text-main: #e0e0ff;
+    --color-text-secondary: #a78bfa;
+    --color-border: #3f3c5c;
+    --color-card-bg: #1a1333;
 
-    --color-dark-border: #3f3c5c;
-    --color-dark-card-bg: #1a1333;
+    --color-skeleton-light: #4b5563;
+    --color-skeleton-dark: #374151;
 
-    --color-purple-accent-secondary: #8a2be2;
-    --color-purple-accent-secondary-hover: #7326c5;
-    --color-purple-accent-secondary-active: #611ea8;
-
-    --color-accent: var(--color-purple-accent-secondary); /* Morado eléctrico */
-    --color-accent-secondary: #00eaff; /* Cian neón */
-  }
-}
-
-@keyframes shrink {
-  from {
-    width: 100%;
-  }
-  to {
-    width: 0%;
+    --color-accent: #9635f0;
+    --color-accent-hover: #7326c5;
+    --color-accent-active: #611ea8;
+    --color-accent-secondary: #00eaff;
   }
 }

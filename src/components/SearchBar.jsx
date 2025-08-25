@@ -46,12 +46,12 @@ const SearchBar = ({ className = '' }) => {
 
       {/* Mobile Search Overlay */}
       {isOpen && (
-        <div className="fixed inset-x-0 top-20 z-50 flex flex-col items-center justify-center gap-4 bg-black/50 p-4">
+        <div className="fixed inset-x-0 top-20 z-50 flex flex-col items-center justify-center gap-4 bg-black/50 p-4 md:hidden">
           <div className="relative w-full max-w-md">
             <input
               type="text"
               placeholder="Search products by title or description"
-              className="hover:border-accent focus:border-accent w-full rounded-md border border-gray-300 bg-white p-3 pr-10 shadow-lg focus:ring-1 focus:outline-none"
+              className="hover:border-accent focus:border-accent border-border w-full rounded-md border bg-white p-3 pr-10 text-black shadow-lg focus:ring-1 focus:outline-none"
               value={inputValue}
               onInput={handleChange}
               autoFocus
@@ -71,7 +71,7 @@ const SearchBar = ({ className = '' }) => {
       <input
         type="text"
         placeholder="Search products by title or description"
-        className="hover:border-accent focus:outline-accent hidden w-full max-w-3xl rounded-md border border-gray-300 bg-white p-2 md:block"
+        className="hover:border-accent focus:outline-accent border-border hidden w-full max-w-3xl rounded-md border bg-white p-2 text-black md:block"
         value={inputValue}
         onInput={handleChange}
       />

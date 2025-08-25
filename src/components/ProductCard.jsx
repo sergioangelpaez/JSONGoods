@@ -11,12 +11,10 @@ const ProductCard = ({ product }) => {
   const [imgLoaded, setImgLoaded] = useState(false);
 
   return (
-    <div className="border-gray-border flex flex-col gap-3 rounded-md border bg-white px-3 py-5 shadow-lg">
+    <div className="border-border dark:bg-dark-card-bg bg-card-bg flex flex-col gap-3 rounded-md border px-3 py-5 shadow-lg">
       {/* Img */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md">
-        {!imgLoaded && (
-          <div className="absolute inset-0 animate-pulse rounded-md bg-gray-300"></div>
-        )}
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-md bg-white/60">
+        {!imgLoaded && <div className="absolute inset-0 animate-pulse rounded-md"></div>}
         <img
           src={product.thumbnail}
           alt="Product"
@@ -36,17 +34,15 @@ const ProductCard = ({ product }) => {
 
       {/* Product Content */}
       <div>
-        <h1 className="truncate text-lg font-semibold">{product.title}</h1>
+        <h1 className="text-text-main truncate text-lg font-semibold">{product.title}</h1>
       </div>
       <div className="min-h-[100px]">
-        <p className="line-clamp-5 text-sm text-gray-600">{product.description}</p>
+        <p className="text-text-secondary line-clamp-5 text-sm">{product.description}</p>
       </div>
 
       <div className="flex items-baseline-last justify-between">
         <div>
-          <p className="text-light-text-main text-center text-2xl font-semibold">
-            ${product.price}
-          </p>
+          <p className="text-text-main text-center text-2xl font-semibold">${product.price}</p>
         </div>
         <div className="flex items-center gap-2">
           <div className="flex flex-col">
@@ -57,7 +53,7 @@ const ProductCard = ({ product }) => {
             </div>
             <div className="flex items-baseline justify-center gap-1">
               <p className="text-md font-semibold">{product.rating.toFixed(1)}</p>
-              <p className="text-sm">({product.reviews.length} reviews)</p>
+              <p className="text-text-secondary text-sm">({product.reviews.length} reviews)</p>
             </div>
           </div>
         </div>
