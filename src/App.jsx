@@ -59,8 +59,8 @@ const App = () => {
           </div>
 
           {/* Products */}
-          <div className="col-start-1 col-end-4 lg:col-start-2">
-            <div className="grid-rows-auto border-light-border grid grid-cols-1 gap-5 border-b-1 pb-5 lg:grid-cols-2 xl:grid-cols-4">
+          <div className="col-start-1 col-end-4 md:col-start-2">
+            <div className="grid-rows-auto border-light-border grid grid-cols-1 gap-5 border-b-1 pb-5 md:grid-cols-2 xl:grid-cols-4">
               {loading
                 ? Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)
                 : products.map(product => <ProductCard key={product.id} product={product} />)}
