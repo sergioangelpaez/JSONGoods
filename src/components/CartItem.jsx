@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useCart } from '../context/CartContext';
+import { XMarkIcon } from '@heroicons/react/24/outline';
 
 const CartItem = ({ item }) => {
   const { updateQuantity, removeFromCart } = useCart();
@@ -32,18 +33,11 @@ const CartItem = ({ item }) => {
               <p className="text-text-main truncate text-lg font-bold">{item.title}</p>
             </div>
             <div
+              role="button"
               className="group hover:bg-accent cursor-pointer rounded-full p-1"
               onClick={() => removeFromCart(item.id)}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={3}
-                className="stroke-accent size-4 group-hover:stroke-white"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
+              <XMarkIcon className="stroke-accent size-4 group-hover:stroke-white" />
             </div>
           </div>
           <p className="text-text-secondary line-clamp-3 text-sm">{item.description}</p>

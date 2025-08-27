@@ -7,7 +7,10 @@ const NavigationMenu = ({ className = '' }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className={`flex items-center justify-end gap-5 ${className}`}>
+    <div
+      data-testid="navigation-menu"
+      className={`flex items-center justify-end gap-5 ${className}`}
+    >
       {/* Desktop Menu */}
       <div className="flex items-center gap-3 md:gap-5">
         {/* Cart + badge */}

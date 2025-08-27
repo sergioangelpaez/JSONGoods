@@ -3,6 +3,7 @@ import { useCart } from '../context/CartContext';
 import Button from './Button';
 import CartItem from './CartItem';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 
 export default function CartSidebar() {
   const { cartItems, isCartOpen, setIsCartOpen, clearCart } = useCart();
@@ -36,20 +37,7 @@ export default function CartSidebar() {
               {/* Header */}
               <div className="row-start-1 mb-5 flex w-full">
                 <Button onClick={() => setIsCartOpen(false)}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="size-5"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15.75 19.5 8.25 12l7.5-7.5"
-                    />
-                  </svg>
+                  <ChevronLeftIcon className="size-5" />
                   <p className="text-sm">Back to catalog</p>
                 </Button>
               </div>

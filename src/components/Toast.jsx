@@ -17,11 +17,13 @@ const Toast = ({ title = '', message = '', variant = 'message', onClose }) => {
       containerClass: 'bg-accent text-white',
       icon: <InformationCircleIcon className="size-8" />,
       duration: 5000,
-      progressClass: 'bg-purple-900/60', // un poco más oscuro
+      progressClass: 'bg-purple-900/60',
     },
     warning: {
       containerClass: 'bg-yellow-500 text-black',
-      icon: <ExclamationTriangleIcon className="size-8" />,
+      icon: (
+        <ExclamationTriangleIcon className="size-8" data-testid="heroicon-exclamation-triangle" />
+      ),
       duration: 10000,
       progressClass: 'bg-yellow-700/70',
     },
@@ -33,18 +35,7 @@ const Toast = ({ title = '', message = '', variant = 'message', onClose }) => {
     },
     success: {
       containerClass: 'bg-green-600 text-white',
-      icon: (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="size-6"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
-        </svg>
-      ),
+      icon: <XCircleIcon className="size-8" />,
       duration: 5000,
       progressClass: 'bg-green-800/70',
     },
