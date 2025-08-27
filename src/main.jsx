@@ -4,13 +4,16 @@ import './styles/index.css';
 import Root from './Root.jsx';
 import { ProductProvider } from './context/ProductContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ProductProvider>
+    <ThemeProvider>
       <CartProvider>
-        <Root />
+        <ProductProvider>
+          <Root />
+        </ProductProvider>
       </CartProvider>
-    </ProductProvider>
+    </ThemeProvider>
   </StrictMode>
 );

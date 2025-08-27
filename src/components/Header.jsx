@@ -1,14 +1,23 @@
-import HeaderIcons from './HeaderIcons';
+import { useProducts } from '../context/ProductContext';
+import NavigationMenu from './NavigationMenu';
 import SearchBar from './SearchBar';
 
 const Header = ({ className = '' }) => {
+  const { reloadApp } = useProducts();
   return (
     <div
-      className={`grid grid-cols-[0.35fr_2fr_0.2fr] gap-5 px-10 py-5 ${className} bg-light-bg-main z-30 shadow-md`}
+      data-testid="header"
+      className={`grid grid-cols-[0.35fr_2fr_0.2fr] gap-3 px-5 py-5 md:px-10 ${className} bg-bg-main shadow-accent/30 z-30 shadow-lg`}
     >
-      <h1 className="text-accent text-4xl font-bold whitespace-nowrap">JSON Goods</h1>
+      <h1
+        onClick={() => reloadApp()}
+        className="text-accent dark:text-text-main cursor-pointer text-3xl font-bold whitespace-nowrap md:text-4xl"
+        title="Reload app"
+      >
+        JSON Goods
+      </h1>
       <SearchBar className="col-start-2 col-end-3" />
-      <HeaderIcons className="col-start-3" />
+      <NavigationMenu className="col-start-3" />
     </div>
   );
 };

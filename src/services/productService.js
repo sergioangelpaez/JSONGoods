@@ -15,7 +15,7 @@ export const getAllProductCategories = async () => {
   return response.data;
 };
 
-export const getProductBySearch = async (query) => {
+export const getProductBySearch = async query => {
   const response = await axios.get(`/products/search?q=${query}`);
   return response.data.products;
 };
