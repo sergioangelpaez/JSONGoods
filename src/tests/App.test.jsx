@@ -33,7 +33,6 @@ vi.mock('../components/Toast', () => ({
   ),
 }));
 
-// Mock Skeletons y FilterSidebar porque no son foco aquí
 vi.mock('../components/Skeletons/ProductCardSekeleton', () => ({
   default: () => <div data-testid="product-skeleton">Skeleton</div>,
 }));
@@ -51,7 +50,7 @@ describe('App integration', () => {
   const mockLoadMoreProducts = vi.fn();
 
   beforeEach(() => {
-    vi.useFakeTimers(); // 👈 habilitar timers falsos
+    vi.useFakeTimers();
     vi.clearAllMocks();
 
     useProducts.mockReturnValue({
@@ -76,7 +75,7 @@ describe('App integration', () => {
   });
 
   afterEach(() => {
-    vi.useRealTimers(); // 👈 restaurar timers reales
+    vi.useRealTimers();
   });
 
   it('renders header, product and cart sidebar', () => {
@@ -119,17 +118,14 @@ describe('App integration', () => {
     const filterBtn = screen.getByRole('button', { name: /filters/i });
     fireEvent.click(filterBtn);
 
-    // ahora habrá 2 sidebars (desktop y mobile)
     const sidebars = screen.getAllByTestId('filter-sidebar');
     expect(sidebars.length).toBeGreaterThan(1);
 
-    // aseguramos que el sidebar móvil está montado
     expect(sidebars[1]).toBeInTheDocument();
 
     const closeBtn = screen.getByRole('button', { name: /close/i });
     fireEvent.click(closeBtn);
 
-    // simulamos el delay de animación
     act(() => {
       vi.advanceTimersByTime(500);
     });

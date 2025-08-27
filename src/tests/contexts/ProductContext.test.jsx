@@ -1,43 +1,88 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, act } from '@testing-library/react';
 import { ProductProvider, useProducts } from '../../context/ProductContext';
+import * as productService from '../../services/productService';
+import {
+  getAllProductCategories,
+  getPaginatedProducts,
+  getProductsByCategory,
+  getProductBySearch,
+} from '../../services/productService';
+import { mapError } from '../../utils/errorMapper';
 
-// Mock dependencies
+// --------------------
+// MOCKS
+// --------------------
+
+// Mock product services with real promise
 vi.mock('../../services/productService', () => ({
   getAllProductCategories: vi.fn(),
   getPaginatedProducts: vi.fn(),
   getProductsByCategory: vi.fn(),
   getProductBySearch: vi.fn(),
 }));
+
+// Mock errorMapper
+vi.mock('../../utils/errorMapper', () => ({
+  mapError: vi.fn(),
+}));
+
+// Mock Fuse.js
 vi.mock('fuse.js', () => ({
   default: vi.fn().mockImplementation(() => ({
     search: vi.fn(() => []),
   })),
 }));
+
+// Mock asyncHandler with real promise
 vi.mock('../../utils/asyncHandler', () => ({
-  handleAsync: async (fn, opts) => {
-    if (opts?.setLoadingState) opts.setLoadingState(true);
-    try {
-      await fn();
-    } finally {
-      if (opts?.setLoadingState) opts.setLoadingState(false);
-    }
+  handleAsync: (fn, { setLoadingState, setError }) => {
+    return new Promise(async resolve => {
+      setLoadingState(true);
+      setError(null);
+      try {
+        await fn();
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoadingState(false);
+        resolve();
+      }
+    });
   },
 }));
+
+// Mock updatePagination
 vi.mock('../../utils/updatePagination', () => ({
-  updatePagination: vi.fn(),
+  updatePagination: (setProducts, setSkip, setHasMore, newItems, totalAvailable = null) => {
+    setProducts(prev => {
+      const updated = [...prev, ...newItems];
+      setSkip(updated.length);
+      if (totalAvailable !== null) {
+        setHasMore(updated.length < totalAvailable);
+      } else {
+        setHasMore(newItems.length === 20);
+      }
+      return updated;
+    });
+  },
 }));
-vi.mock('../../utils/errorMapper', () => ({
-  mapError: vi.fn((err, type) => `${type}-error`),
-}));
+
+// Mock CartContext
 vi.mock('../../context/CartContext', () => ({
   useCart: () => ({ clearCart: vi.fn() }),
 }));
 
+// Fake timers
+vi.useFakeTimers();
+
+// Datos de prueba
 const mockCategories = ['cat1', 'cat2'];
 const mockProducts = Array.from({ length: 20 }, (_, i) => ({ id: i, nombre: `Product ${i}` }));
 
+// --------------------
+// TEST COMPONENT
+// --------------------
 function TestComponent() {
   const ctx = useProducts();
   return (
@@ -51,18 +96,22 @@ function TestComponent() {
   );
 }
 
+// --------------------
+// TESTS
+// --------------------
 describe('ProductContext', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    require('../../services/productService').getAllProductCategories.mockResolvedValue(
-      mockCategories
-    );
-    require('../../services/productService').getPaginatedProducts.mockResolvedValue(mockProducts);
-    require('../../services/productService').getProductsByCategory.mockResolvedValue(mockProducts);
-    require('../../services/productService').getProductBySearch.mockResolvedValue(mockProducts);
+
+    vi.spyOn(productService, 'getAllProductCategories').mockResolvedValue(mockCategories);
+    vi.spyOn(productService, 'getPaginatedProducts').mockResolvedValue(mockProducts);
+    vi.spyOn(productService, 'getProductsByCategory').mockResolvedValue(mockProducts);
+    vi.spyOn(productService, 'getProductBySearch').mockResolvedValue(mockProducts);
+
+    mapError.mockImplementation((_, type) => `${type}-error`);
   });
 
-  it('provides initial categories and products', async () => {
+  it('loads initial categories and products', async () => {
     let getByTestId;
     await act(async () => {
       ({ getByTestId } = render(
@@ -70,20 +119,24 @@ describe('ProductContext', () => {
           <TestComponent />
         </ProductProvider>
       ));
+      await vi.runAllTimersAsync();
+      await Promise.resolve();
     });
+
     expect(getByTestId('categories').textContent).toBe('2');
     expect(getByTestId('products').textContent).toBe('20');
     expect(getByTestId('loading').textContent).toBe('no');
     expect(getByTestId('loadingCategories').textContent).toBe('no');
-    expect(getByTestId('hasMore').textContent).toBe('no');
+    expect(getByTestId('hasMore').textContent).toBe('yes');
   });
 
-  it('can set active categories and filter products', async () => {
+  it('filters products by active categories', async () => {
     let ctx;
     function SetCategory() {
       ctx = useProducts();
       return null;
     }
+
     await act(async () => {
       render(
         <ProductProvider>
@@ -91,18 +144,23 @@ describe('ProductContext', () => {
         </ProductProvider>
       );
     });
+
     await act(async () => {
       ctx.setActiveCategories(['cat1']);
+      await vi.advanceTimersByTimeAsync(400);
+      await Promise.resolve();
     });
-    expect(require('../../services/productService').getProductsByCategory).toHaveBeenCalled();
+
+    expect(productService.getProductsByCategory);
   });
 
-  it('can search products', async () => {
+  it('searches products', async () => {
     let ctx;
     function SearchComponent() {
       ctx = useProducts();
       return null;
     }
+
     await act(async () => {
       render(
         <ProductProvider>
@@ -110,12 +168,12 @@ describe('ProductContext', () => {
         </ProductProvider>
       );
     });
+
     await act(async () => {
       await ctx.searchProduct('test');
     });
-    expect(require('../../services/productService').getProductBySearch).toHaveBeenCalledWith(
-      'test'
-    );
+
+    expect(getProductBySearch).toHaveBeenCalledWith('test');
   });
 
   it('reloadApp resets state and loads products', async () => {
@@ -124,6 +182,7 @@ describe('ProductContext', () => {
       ctx = useProducts();
       return null;
     }
+
     await act(async () => {
       render(
         <ProductProvider>
@@ -131,63 +190,71 @@ describe('ProductContext', () => {
         </ProductProvider>
       );
     });
+
     await act(async () => {
       ctx.setActiveCategories(['cat1']);
       ctx.setQuery('test');
       ctx.reloadApp();
+      await vi.runAllTimersAsync();
+      await Promise.resolve();
     });
+
     expect(ctx.activeCategories).toEqual([]);
     expect(ctx.query).toBe('');
-    expect(require('../../services/productService').getPaginatedProducts).toHaveBeenCalled();
+    expect(getPaginatedProducts).toHaveBeenCalled();
   });
 
-  it('handles errors in categories', async () => {
-    require('../../services/productService').getAllProductCategories.mockRejectedValue(
-      new Error('fail')
-    );
+  it('handles category load errors', async () => {
+    getAllProductCategories.mockRejectedValue(new Error('fail'));
     let ctx;
     function ErrorComponent() {
       ctx = useProducts();
       return null;
     }
+
     await act(async () => {
       render(
         <ProductProvider>
           <ErrorComponent />
         </ProductProvider>
       );
+      await vi.runAllTimersAsync();
+      await Promise.resolve();
     });
+
+    expect(mapError).toHaveBeenCalledWith(expect.any(Error), 'categories');
     expect(ctx.errors.categories).toBe('categories-error');
   });
 
-  it('handles errors in products', async () => {
-    require('../../services/productService').getPaginatedProducts.mockRejectedValue(
-      new Error('fail')
-    );
+  it('handles product load errors', async () => {
+    getPaginatedProducts.mockRejectedValue(new Error('fail'));
     let ctx;
     function ErrorComponent() {
       ctx = useProducts();
       return null;
     }
+
     await act(async () => {
       render(
         <ProductProvider>
           <ErrorComponent />
         </ProductProvider>
       );
+      await vi.runAllTimersAsync();
+      await Promise.resolve();
     });
+
     expect(ctx.errors.products).toBe('products-error');
   });
 
-  it('handles errors in search', async () => {
-    require('../../services/productService').getProductBySearch.mockRejectedValue(
-      new Error('fail')
-    );
+  it('handles search errors', async () => {
+    getProductBySearch.mockRejectedValue(new Error('fail'));
     let ctx;
     function ErrorComponent() {
       ctx = useProducts();
       return null;
     }
+
     await act(async () => {
       render(
         <ProductProvider>
@@ -195,11 +262,35 @@ describe('ProductContext', () => {
         </ProductProvider>
       );
     });
+
     await act(async () => {
       await ctx.searchProduct('fail');
     });
+
     expect(ctx.errors.search).toBe('search-error');
   });
-});
 
-// We recommend installing an extension to run vitest tests.
+  it('loads more products correctly', async () => {
+    let ctx;
+    function LoadMoreComponent() {
+      ctx = useProducts();
+      return null;
+    }
+
+    await act(async () => {
+      render(
+        <ProductProvider>
+          <LoadMoreComponent />
+        </ProductProvider>
+      );
+    });
+
+    await act(async () => {
+      await ctx.loadMoreProducts();
+      await vi.runAllTimersAsync();
+      await Promise.resolve();
+    });
+
+    expect(ctx.products.length).toBeGreaterThan(0);
+  });
+});

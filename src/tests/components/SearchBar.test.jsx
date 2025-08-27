@@ -2,12 +2,10 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import SearchBar from '../../components/SearchBar';
 import { useProducts } from '../../context/ProductContext';
 
-// Mock del hook de productos
 vi.mock('../../context/ProductContext', () => ({
   useProducts: vi.fn(),
 }));
 
-// Fake timers para controlar debounce
 beforeEach(() => {
   vi.useFakeTimers();
 });
@@ -35,7 +33,6 @@ describe('SearchBar component', () => {
     const openBtn = screen.getByLabelText('Open search');
     fireEvent.click(openBtn);
 
-    // Ahora el overlay se renderiza y aparece el input mobile
     const [desktopInput, mobileInput] = screen.getAllByRole('textbox');
     expect(desktopInput).toBeInTheDocument();
     expect(mobileInput).toBeInTheDocument();
@@ -63,7 +60,6 @@ describe('SearchBar component', () => {
     render(<SearchBar />);
     fireEvent.click(screen.getByLabelText('Open search'));
 
-    // Agarramos el input del overlay (último de los dos textboxes)
     const inputs = screen.getAllByRole('textbox');
     const mobileInput = inputs[1];
 

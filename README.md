@@ -8,24 +8,25 @@ This is an interactive web application built with **React** and styled with **Ta
 
 ## ✨ Key Features
 
-* **⚡️ Real-time Search**: Find products instantly by typing in the search bar. The search filters products by their title or description with optimized performance using a **debounce** function.
-* **🗂️ Multi-Category Filtering**: Refine your search results by selecting one or more categories from a dynamically loaded list.
-* **📦 Scalable State Management**: The app uses two separate contexts, `useProducts` and `useCart`, to handle product data and shopping cart state independently and efficiently.
-* **➡️ "Load More" Functionality**: Instead of traditional pagination, users can click a button to progressively load more products, ensuring a fast initial render and efficient use of resources.
-* **🌙 Dark Mode Toggle**: Personalize your viewing experience by switching between a light and a dark theme.
-* **🔄 Enhanced User Feedback**: The app provides a smooth user experience with visual cues like a **skeleton loading state**, clear error messages, and a friendly message when no products are found.
+- **⚡️ Real-time Search**: Find products instantly by typing in the search bar. The search filters products by their title or description with optimized performance using a **debounce** function.
+- **🗂️ Multi-Category Filtering**: Refine your search results by selecting one or more categories from a dynamically loaded list.
+- **📦 Scalable State Management**: The app uses two separate contexts, `useProducts` and `useCart`, to handle product data and shopping cart state independently and efficiently.
+- **➡️ "Load More" Functionality**: Instead of traditional pagination, users can click a button to progressively load more products, ensuring a fast initial render and efficient use of resources.
+- **🌙 Dark Mode Toggle**: Personalize your viewing experience by switching between a light and a dark theme.
+- **🔄 Enhanced User Feedback**: The app provides a smooth user experience with visual cues like a **skeleton loading state**, clear error messages, and a friendly message when no products are found.
 
 ---
 
 ## 🛠️ Technologies Used
 
-* **Frontend Framework**: [React](https://reactjs.org/) (with Hooks)
-* **Build Tool**: [Vite](https://vitejs.dev/)
-* **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-* **API Consumption**: [Axios](https://axios-http.com/) (with an API instance)
-* **API Endpoint**: [dummyjson.com](https://dummyjson.com/)
-* **Code Quality**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
-* **Version Control**: Git & GitHub
+- **Frontend Framework**: [React](https://reactjs.org/) (with both stock and custom Hooks)
+- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **API Consumption**: [Axios](https://axios-http.com/) (with an Axios instance)
+- **API Endpoint**: [dummyjson.com](https://dummyjson.com/)
+- **Code Quality**: [ESLint](https://eslint.org/) & [Prettier](https://prettier.io/)
+- **Version Control**: [Git](https://git-scm.com/) & [GitHub](https://github.com/)
+- **Testing**: [Vitest](https://vitest.dev/)
 
 ---
 
@@ -34,18 +35,20 @@ This is an interactive web application built with **React** and styled with **Ta
 Follow these steps to get the project up and running on your local machine:
 
 1.  **Clone the repository**:
+
     ```bash
-    git clone [https://github.com/your-username/your-repo-name.git](https://github.com/your-username/your-repo-name.git)
-    cd your-repo-name
+    git clone (https://github.com/sergioangelpaez/JSONGoods.git)
+    cd jsongoods
     ```
-    (Replace `your-username/your-repo-name` with your actual repository URL).
 
 2.  **Install dependencies**:
+
     ```bash
     npm install
     ```
 
 3.  **Start the development server**:
+
     ```bash
     npm run dev
     ```
@@ -55,6 +58,6 @@ Follow these steps to get the project up and running on your local machine:
 
 ---
 
-## 🖼️ Visual Demo
+## 🖼️ Live demo
 
-Coming soon!
+    A live demo of this app will be available soon at Vercel.

@@ -3,17 +3,14 @@ import ProductCard from '../../components/ProductCard';
 import { useCart } from '../../context/CartContext';
 import { getStarTypes } from '../../utils/getStarTypes';
 
-// Mock del hook de carrito
 vi.mock('../../context/CartContext', () => ({
   useCart: vi.fn(),
 }));
 
-// Mock de getStarTypes (para controlar las estrellas)
 vi.mock('../../utils/getStarTypes', () => ({
   getStarTypes: vi.fn(),
 }));
 
-// Mock de componentes hijos
 vi.mock('../../components/Button', () => ({
   default: ({ children, onClick, className }) => (
     <button data-testid="mock-button" className={className} onClick={onClick}>
@@ -60,7 +57,7 @@ describe('ProductCard component', () => {
     render(<ProductCard product={product} />);
     const chips = screen.getAllByTestId('mock-category');
     expect(chips).toHaveLength(2);
-    expect(chips[0]).toHaveTextContent('Tech'); // viene de capitalize()
+    expect(chips[0]).toHaveTextContent('Tech');
     expect(chips[1]).toHaveTextContent('New');
   });
 
