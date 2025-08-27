@@ -60,4 +60,4 @@ Follow these steps to get the project up and running on your local machine:
 
 ## 🖼️ Live demo
 
-    A live demo of this app will be available soon at Vercel.
+    Check out the live version of the app here: https://json-goods.vercel.app/
